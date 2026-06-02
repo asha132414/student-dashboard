@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import * as Icons from "lucide-react";
 
+// సుపాబేస్ నుండి వచ్చే డేటా స్ట్రక్చర్ ఇంటర్‌ఫేస్
 interface Course {
   id: string;
   title: string;
@@ -15,23 +16,32 @@ interface CourseCardProps {
 }
 
 export default function CourseCard({ course }: CourseCardProps) {
-  // ⭐️ 'any' ఎర్రర్‌ను ఫిక్స్ చేసే లాజిక్ ఇక్కడ ఉంది
-  const iconName = course.icon_name as keyof typeof Icons;
-  const LucideIcon = (Icons[iconName] as React.ElementType) || Icons.BookOpen;
+  // లూసిడ్ ఐకాన్స్ లోని కీస్ మాత్రమే ఉండేలా టైప్ సేఫ్ లాజిక్
+  const iconKey = Object.keys(Icons).find(
+    (key) => key.toLowerCase() === course.icon_name.toLowerCase()
+  ) as keyof typeof Icons | undefined;
+  
+  // ఒకవేళ ఐకాన్ దొరికితే దాన్ని వాడుతుంది, లేదంటే డిఫాల్ట్‌గా BookOpen ఐకాన్ వస్తుంది
+  const LucideIcon = iconKey ? (Icons[iconKey] as React.ComponentType<{ className?: string }>) : Icons.BookOpen;
 
   return (
     <motion.article 
+      // Requirement 4: మౌస్ పెట్టినప్పుడు 1-2% స్కేల్ అవ్వాలి మరియు వై-యాక్సిస్ పై పైకి జరగాలి
       whileHover={{ scale: 1.02, y: -5 }} 
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="bg-zinc-900 border border-zinc-800 hover:border-cyan-500/50 p-6 rounded-2xl relative overflow-hidden group"
+      // Requirement: స్ప్రింగ్ ఫిజిక్స్ వాడాలి
+      transition={{ type: "spring", stiffness: 300, damping: 20 }} 
+      className="bg-zinc-900 border border-zinc-800 hover:border-cyan-500/50 p-6 rounded-2xl relative overflow-hidden group transition-colors duration-300"
     >
+      {/* Background: హోవర్ చేసినప్పుడు గ్రేడియంట్ మెష్ రివీల్ అవుతుంది */}
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
       <div className="relative z-10">
+        {/* Glowing Icon Container */}
         <div className="p-3 bg-zinc-800 text-cyan-400 w-fit rounded-xl mb-4 group-hover:shadow-[0_0_15px_rgba(34,211,238,0.3)] transition-shadow">
           <LucideIcon className="w-6 h-6" />
         </div>
         
+        {/* Course Title */}
         <h3 className="text-lg font-bold text-white mb-2">{course.title}</h3>
         
         <div className="mt-6">
@@ -40,7 +50,9 @@ export default function CourseCard({ course }: CourseCardProps) {
             <span className="font-medium text-cyan-400">{course.progress}%</span>
           </div>
           
+          {/* Progress Bar Container */}
           <div className="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
+            {/* Requirement: 0% నుండి ఆటోమేటిక్‌గా డేటాబేస్ వాల్యూ వరకు యానిమేట్ అవ్వాలి */}
             <motion.div 
               initial={{ width: "0%" }} 
               animate={{ width: `${course.progress}%` }} 
