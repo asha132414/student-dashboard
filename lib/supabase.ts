@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+// మీ సుపాబేస్ లింక్‌లను నేరుగా ఇక్కడే యాడ్ చేశాను
+const supabaseUrl = 'https://prqzvhwkbeiqycolrlck.supabase.co';
+const supabaseAnonKey = 'sb_publishable_RH3z04113M2QnQuI7KAnT4vsh73Isk3K';
 
-// URL లేదా కీ లేకపోతే బిల్డ్ ఆగిపోకుండా ఖాళీ స్ట్రింగ్ పంపిస్తున్నాం
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
