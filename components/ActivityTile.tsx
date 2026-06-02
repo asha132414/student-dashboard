@@ -1,80 +1,56 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
 
-// 📊 వీక్లీ డేటా ఇంటర్ఫేస్
+// 1. డేటా స్వీకరించడానికి టైప్ ఇంటర్‌ఫేస్ క్రియేట్ చేసాము
 interface ActivityData {
   day: string;
   hours: number;
 }
 
-// వీక్లీ స్టడీ స్కోర్స్
-const weeklyData: ActivityData[] = [
-  { day: "Mon", hours: 4 },
-  { day: "Tue", hours: 7 },
-  { day: "Wed", hours: 3 },
-  { day: "Thu", hours: 8 },
-  { day: "Fri", hours: 5 },
-  { day: "Sat", hours: 9 },
-  { day: "Sun", hours: 2 },
-];
+interface ActivityTileProps {
+  data: ActivityData[];
+}
 
-export default function ActivityTile() {
-  // గరిష్ట గంటలను లెక్కించడం (గ్రాఫ్ స్కేలింగ్ కోసం)
-  const maxHours = Math.max(...weeklyData.map((d) => d.hours), 1);
+export default function ActivityTile({ data }: ActivityTileProps) {
+  // గరిష్ట వాల్యూ కనుక్కోవడం (గ్రాఫ్ హైట్ సెట్ చేయడానికి)
+  const maxHours = data.length > 0 ? Math.max(...data.map(d => d.hours)) : 10;
 
   return (
-    <section className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl relative overflow-hidden group transition-colors duration-300">
-      {/* Hover Glow Effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-
-      <div className="relative z-10 flex flex-col h-full justify-between">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h3 className="text-lg font-bold text-white">Weekly Activity</h3>
-            <p className="text-zinc-500 text-xs mt-0.5">Hours spent learning this week</p>
-          </div>
-          <span className="text-xs font-medium text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-full border border-cyan-500/20">
-            This Week
-          </span>
-        </div>
-
-        {/* 📈 బార్ గ్రాఫ్ కంటైనర్ */}
-        <div className="flex items-end justify-between h-40 pt-10 px-2 bg-zinc-950/40 rounded-xl border border-zinc-800/50 gap-1 sm:gap-2">
-          {weeklyData.map((data) => {
-            const barHeightPercentage = (data.hours / maxHours) * 100;
-
+    <div className="bg-[#121212] p-6 rounded-2xl border border-[#222] shadow-xl col-span-1 md:col-span-2">
+      <h2 className="text-xl font-bold text-white mb-6">Weekly Activity</h2>
+      
+      {/* గ్రాఫ్ డిజైన్ */}
+      <div className="flex items-end justify-between h-48 pt-4 px-2 bg-[#1a1a1a] rounded-xl gap-2">
+        {data.length === 0 ? (
+          <div className="text-gray-500 text-center w-full pb-20">No data available</div>
+        ) : (
+          data.map((item, index) => {
+            // పర్సంటేజ్ ప్రకారం బార్ హైట్ లెక్కించడం
+            const barHeight = `${(item.hours / maxHours) * 100}%`;
+            
             return (
-              <div key={data.day} className="flex flex-col items-center flex-1 group/bar relative">
-                {/* Tooltip స్కోర్ */}
-                <div className="absolute -top-8 opacity-0 group-hover/bar:opacity-100 transition-opacity bg-zinc-800 text-cyan-400 text-[10px] font-bold px-2 py-0.5 rounded border border-zinc-700 shadow-lg pointer-events-none whitespace-nowrap z-20">
-                  {data.hours} hrs
-                </div>
-
-                {/* అనిమేటెడ్ బార్ */}
-                <div className="w-full max-w-[24px] bg-zinc-800/30 h-full rounded-t-md flex items-end overflow-hidden">
-                  <motion.div
-                    initial={{ height: 0 }}
-                    animate={{ height: `${barHeightPercentage}%` }}
-                    // Challenge Requirement: Spring Physics with stiffness 100
-                    transition={{
-                      type: "spring",
-                      stiffness: 100,
-                      damping: 15,
-                    }}
-                    className="w-full bg-gradient-to-t from-blue-600 via-cyan-500 to-cyan-400 rounded-t-md shadow-[0_0_15px_rgba(34,211,238,0.2)]"
-                  />
-                </div>
-
-                <span className="text-[10px] sm:text-xs text-zinc-500 font-medium mt-2 mb-1 group-hover/bar:text-zinc-300 transition-colors">
-                  {data.day}
+              <div key={index} className="flex flex-col items-center flex-1 group">
+                {/* హోవర్ చేసినప్పుడు గంటలు చూపించడానికి */}
+                <span className="text-xs text-[#38bdf8] opacity-0 group-hover:opacity-100 transition-opacity mb-1 font-semibold">
+                  {item.hours}h
+                </span>
+                
+                {/* యానిమేటెడ్ బార్ */}
+                <div 
+                  style={{ height: barHeight }} 
+                  className="w-full bg-gradient-to-t from-[#0284c7] to-[#38bdf8] rounded-t-md transition-all duration-500 min-h-[5px]"
+                ></div>
+                
+                {/* రోజు పేరు */}
+                <span className="text-xs text-gray-4 mt-2 font-medium">
+                  {item.day}
                 </span>
               </div>
             );
-          })}
-        </div>
+          })
+        )}
       </div>
-    </section>
+    </div>
   );
 }
