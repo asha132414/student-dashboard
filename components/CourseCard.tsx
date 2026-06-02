@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import * as Icons from "lucide-react";
 
-// అసైన్‌మెంట్‌ నిబంధన ప్రకారం టైప్‌స్క్రిప్ట్ ఇంటర్‌ఫేస్
 interface Course {
   id: string;
   title: string;
@@ -11,51 +10,44 @@ interface Course {
   icon_name: string;
 }
 
-export default function CourseCard({ course }: { course: Course }) {
-  // డైనమిక్ ఐకాన్ మ్యాపింగ్ సేఫ్ రూట్
-  const IconComponent = (Icons[course.icon_name as keyof typeof Icons] as React.ComponentType<{ className?: string }>) || Icons.BookOpen;
+interface CourseCardProps {
+  course: Course;
+}
+
+export default function CourseCard({ course }: CourseCardProps) {
+  // ⭐️ 'any' ఎర్రర్‌ను ఫిక్స్ చేసే లాజిక్ ఇక్కడ ఉంది
+  const iconName = course.icon_name as keyof typeof Icons;
+  const LucideIcon = (Icons[iconName] as React.ElementType) || Icons.BookOpen;
 
   return (
-    <motion.article
-      variants={{
-        hidden: { opacity: 0, y: 30 },
-        visible: { opacity: 1, y: 0 }
-      }}
-      // అసైన్‌మెంట్‌ నిబంధన ప్రకారం స్ప్రింగ్ ఫిజిక్స్ యానిమేషన్
-      transition={{
-        type: "spring",
-        stiffness: 300,
-        damping: 20
-      }}
-      whileHover={{ scale: 1.02, y: -5 }} // కార్డ్ హోవర్ ఎఫెక్ట్
-      className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl relative overflow-hidden hover:border-zinc-700 transition-colors duration-300 group"
+    <motion.article 
+      whileHover={{ scale: 1.02, y: -5 }} 
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className="bg-zinc-900 border border-zinc-800 hover:border-cyan-500/50 p-6 rounded-2xl relative overflow-hidden group"
     >
-      {/* గ్లోయింగ్ బ్యాక్‌గ్రౌండ్ ఎఫెక్ట్ */}
-      <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-      <div className="flex items-center gap-4 relative z-10">
-        <div className="p-3 bg-zinc-800 text-green-400 rounded-xl group-hover:bg-green-500 group-hover:text-black transition-all duration-300">
-          <IconComponent className="w-6 h-6" />
-        </div>
-        <h3 className="text-xl font-bold text-zinc-100 group-hover:text-white transition-colors">
-          {course.title}
-        </h3>
-      </div>
-
-      <div className="mt-6 relative z-10">
-        <div className="flex justify-between text-sm text-zinc-400 mb-2">
-          <span>Progress</span>
-          <span className="text-green-400 font-medium">{course.progress}%</span>
+      <div className="relative z-10">
+        <div className="p-3 bg-zinc-800 text-cyan-400 w-fit rounded-xl mb-4 group-hover:shadow-[0_0_15px_rgba(34,211,238,0.3)] transition-shadow">
+          <LucideIcon className="w-6 h-6" />
         </div>
         
-        {/* ప్రోగ్రెస్ బార్ యానిమేషన్ (ఇన్-లైన్ స్టైల్స్ మరియు ఎర్రర్స్ పూర్తిగా తొలగించబడ్డాయి) */}
-        <div className="w-full bg-zinc-800 h-2.5 rounded-full overflow-hidden">
-          <motion.div
-            initial={{ width: "0%" }} // విడ్త్‌ను స్ట్రింగ్ ఫార్మాట్‌లో సున్నా చేసాం
-            animate={{ width: `${course.progress}%` }} // ఇక్కడ యానిమేట్ అవుతుంది
-            transition={{ duration: 1, ease: "easeOut", delay: 0.2 }} // Layout shifts రావు
-            className="bg-gradient-to-r from-green-500 to-emerald-400 h-full rounded-full"
-          />
+        <h3 className="text-lg font-bold text-white mb-2">{course.title}</h3>
+        
+        <div className="mt-6">
+          <div className="flex justify-between text-sm text-zinc-400 mb-2">
+            <span>Progress</span>
+            <span className="font-medium text-cyan-400">{course.progress}%</span>
+          </div>
+          
+          <div className="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
+            <motion.div 
+              initial={{ width: "0%" }} 
+              animate={{ width: `${course.progress}%` }} 
+              transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.3 }}
+              className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-full"
+            />
+          </div>
         </div>
       </div>
     </motion.article>
