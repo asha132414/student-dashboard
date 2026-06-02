@@ -5,6 +5,9 @@ import ActivityTile from "../components/ActivityTile";
 import CourseGridClient from "../components/CourseGridClient";
 import SkeletonLoader from "../components/SkeletonLoader";
 
+// ⭐️ 1. ఈ లైన్ యాడ్ చేయండి (ఇది క్యాషింగ్‌ను తీసేసి లైవ్ డేటా తెస్తుంది)
+export const dynamic = "force-dynamic"; 
+
 interface Course {
   id: string;
   title: string;
@@ -57,7 +60,8 @@ export default async function Home() {
           
           {/* Suspense with Skeleton Loader */}
           <Suspense fallback={<SkeletonLoader />}>
-            <CourseGridClient courses={courses} />
+            {/* ⭐️ 2. ఒకవేళ ఇక్కడ కోర్సులు ఉన్నాయో లేవో చెక్ చేసి పంపడానికి ఇలా రాయడం సేఫ్ */}
+            <CourseGridClient courses={courses || []} />
           </Suspense>
         </div>
 
