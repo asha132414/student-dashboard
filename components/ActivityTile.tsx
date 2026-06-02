@@ -3,11 +3,13 @@
 import React from "react";
 import { motion } from "framer-motion";
 
+// 📊 వీక్లీ డేటా ఇంటర్ఫేస్
 interface ActivityData {
   day: string;
   hours: number;
 }
 
+// వీక్లీ స్టడీ స్కోర్స్
 const weeklyData: ActivityData[] = [
   { day: "Mon", hours: 4 },
   { day: "Tue", hours: 7 },
@@ -19,10 +21,12 @@ const weeklyData: ActivityData[] = [
 ];
 
 export default function ActivityTile() {
-  const maxHours = Math.max(...weeklyData.map((d) => d.hours));
+  // గరిష్ట గంటలను లెక్కించడం (గ్రాఫ్ స్కేలింగ్ కోసం)
+  const maxHours = Math.max(...weeklyData.map((d) => d.hours), 1);
 
   return (
     <section className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl relative overflow-hidden group transition-colors duration-300">
+      {/* Hover Glow Effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
       <div className="relative z-10 flex flex-col h-full justify-between">
@@ -36,20 +40,24 @@ export default function ActivityTile() {
           </span>
         </div>
 
-        <div className="flex items-end justify-between h-40 pt-6 px-4 bg-zinc-950/40 rounded-xl border border-zinc-800/50 gap-2">
+        {/* 📈 బార్ గ్రాఫ్ కంటైనర్ */}
+        <div className="flex items-end justify-between h-40 pt-10 px-2 bg-zinc-950/40 rounded-xl border border-zinc-800/50 gap-1 sm:gap-2">
           {weeklyData.map((data) => {
             const barHeightPercentage = (data.hours / maxHours) * 100;
 
             return (
               <div key={data.day} className="flex flex-col items-center flex-1 group/bar relative">
+                {/* Tooltip స్కోర్ */}
                 <div className="absolute -top-8 opacity-0 group-hover/bar:opacity-100 transition-opacity bg-zinc-800 text-cyan-400 text-[10px] font-bold px-2 py-0.5 rounded border border-zinc-700 shadow-lg pointer-events-none whitespace-nowrap z-20">
                   {data.hours} hrs
                 </div>
 
-                <div className="w-full max-w-[28px] bg-zinc-800/50 h-full rounded-t-md flex items-end">
+                {/* అనిమేటెడ్ బార్ */}
+                <div className="w-full max-w-[24px] bg-zinc-800/30 h-full rounded-t-md flex items-end overflow-hidden">
                   <motion.div
-                    initial={{ height: "0%" }}
+                    initial={{ height: 0 }}
                     animate={{ height: `${barHeightPercentage}%` }}
+                    // Challenge Requirement: Spring Physics with stiffness 100
                     transition={{
                       type: "spring",
                       stiffness: 100,
@@ -59,7 +67,7 @@ export default function ActivityTile() {
                   />
                 </div>
 
-                <span className="text-xs text-zinc-500 font-medium mt-2 mb-1 group-hover/bar:text-zinc-300 transition-colors">
+                <span className="text-[10px] sm:text-xs text-zinc-500 font-medium mt-2 mb-1 group-hover/bar:text-zinc-300 transition-colors">
                   {data.day}
                 </span>
               </div>
