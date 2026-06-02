@@ -1,13 +1,13 @@
 import { Suspense } from "react";
-import { supabase } from "../lib/supabase";
-import Sidebar from "../components/Sidebar";
-import ActivityTile from "../components/ActivityTile";
-import CourseGridClient from "../components/CourseGridClient";
-import SkeletonLoader from "../components/SkeletonLoader";
+import { supabase } from "@/lib/supabase"; // 🛠️ స్థిరమైన పాత్ కోసం '@/' వాడటం సేఫ్
+import Sidebar from "@/components/Sidebar";
+import ActivityTile from "@/components/ActivityTile";
+import CourseGridClient from "@/components/CourseGridClient";
+import SkeletonLoader from "@/components/SkeletonLoader";
 
-// ⭐️ 1. ఈ లైన్ యాడ్ చేయండి (ఇది క్యాషింగ్‌ను తీసేసి లైవ్ డేటా తెస్తుంది)
 export const dynamic = "force-dynamic"; 
 
+// Supabase నుండి వచ్చే డేటా మోడల్ టైప్ డెఫినిషన్
 interface Course {
   id: string;
   title: string;
@@ -19,13 +19,15 @@ async function getCourses(): Promise<Course[]> {
   try {
     const { data: courses, error } = await supabase
       .from("courses")
-      .select("*");
+      .select("id, title, progress, icon_name"); // 🛠️ క్లీన్ సెలెక్ట్ క్వెరీ
 
     if (error) {
       console.error("Supabase Error:", error.message);
       return [];
     }
-    return courses || [];
+    
+    // డేటా టైప్‌ను సేఫ్‌గా కాస్ట్ చేయడం
+    return (courses as Course[]) || [];
   } catch (err) {
     console.error("Database connection failed:", err);
     return [];
@@ -37,13 +39,13 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-black text-white flex">
-      {/* Sidebar */}
+      {/* Sidebar Navigation */}
       <Sidebar />
 
       {/* Main Content Area */}
       <section className="flex-1 p-8 overflow-y-auto h-screen">
         
-        {/* Hero Tile */}
+        {/* Hero Welcome Banner */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 mb-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 p-6 opacity-10 text-8xl select-none">🎓</div>
           <h1 className="text-4xl font-extrabold text-white tracking-tight">
@@ -54,19 +56,21 @@ export default async function Home() {
           </p>
         </div>
 
-        {/* Courses Section */}
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-zinc-300 mb-4">Your Active Courses</h2>
-          
-          {/* Suspense with Skeleton Loader */}
-          <Suspense fallback={<SkeletonLoader />}>
-            {/* ⭐️ 2. ఒకవేళ ఇక్కడ కోర్సులు ఉన్నాయో లేవో చెక్ చేసి పంపడానికి ఇలా రాయడం సేఫ్ */}
-            <CourseGridClient courses={courses || []} />
-          </Suspense>
-        </div>
+        {/* Bento Layout Wrapper */}
+        <div className="space-y-6">
+          {/* Active Courses Grid */}
+          <div>
+            <h2 className="text-2xl font-bold text-zinc-300 mb-4">Your Active Courses</h2>
+            <Suspense fallback={<SkeletonLoader />}>
+              <CourseGridClient courses={courses} />
+            </Suspense>
+          </div>
 
-        {/* Activity Tile */}
-        <ActivityTile />
+          {/* 📊 Weekly Activity Chart section */}
+          <div className="w-full pt-2">
+            <ActivityTile />
+          </div>
+        </div>
         
       </section>
     </main>
