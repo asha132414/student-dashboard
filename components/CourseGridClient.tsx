@@ -7,13 +7,13 @@ interface CourseGridClientProps {
   courses: Course[];
 }
 
-// ⭐️ Framer Motion 'Variants' టైప్‌ను స్పష్టంగా డిఫైన్ చేయడం ద్వారా TypeScript ఎర్రర్ రాకుండా ఉంటుంది
+// ⭐️ Framer Motion 'Variants' టైప్‌ను ఇవ్వడం వల్ల TypeScript ఎర్రర్ రాదు
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15, // Requirement 4: కార్డులు ఒకదాని తర్వాత ఒకటి రావడానికి
+      staggerChildren: 0.15, // Requirement 4: ఒకదాని తర్వాత ఒకటి లోడ్ అవుతాయి
     },
   },
 };
@@ -26,7 +26,7 @@ const cardVariants: Variants = {
     transition: {
       type: "spring",
       stiffness: 300,
-      damping: 20, // Requirement 4: స్ప్రింగ్ ఫిజిక్స్ పారామీటర్లు
+      damping: 20, // Requirement 4: స్ప్రింగ్ ఫిజిక్స్
     },
   },
 };
