@@ -1,78 +1,46 @@
-import { Suspense } from "react";
-import { supabase } from "@/lib/supabase"; // 🛠️ స్థిరమైన పాత్ కోసం '@/' వాడటం సేఫ్
-import Sidebar from "@/components/Sidebar";
-import ActivityTile from "@/components/ActivityTile";
-import CourseGridClient from "@/components/CourseGridClient";
-import SkeletonLoader from "@/components/SkeletonLoader";
+"use client";
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import ActivityTile from '@/components/ActivityTile';
 
-export const dynamic = "force-dynamic"; 
+export default function Dashboard() {
+  const [activityData, setActivityData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-// Supabase నుండి వచ్చే డేటా మోడల్ టైప్ డెఫినిషన్
-interface Course {
-  id: string;
-  title: string;
-  progress: number;
-  icon_name: string;
-}
+  useEffect(() => {
+    async function fetchData() {
+      // 1. సుపాబేస్ నుండి డేటా తెచ్చుకుంటున్నాము
+      const { data, error } = await supabase
+        .from('weekly_activity') // మీ టేబుల్ పేరు
+        .select('day, hours')     // మీ కాలమ్ పేర్లు
+        .order('id', { ascending: true }); // వరుస క్రమం కోసం
 
-async function getCourses(): Promise<Course[]> {
-  try {
-    const { data: courses, error } = await supabase
-      .from("courses")
-      .select("id, title, progress, icon_name"); // 🛠️ క్లీన్ సెలెక్ట్ క్వెరీ
-
-    if (error) {
-      console.error("Supabase Error:", error.message);
-      return [];
+      if (error) {
+        console.error('Error fetching data:', error);
+      } else {
+        // 2. వచ్చిన డేటాను స్టేట్ లో సేవ్ చేస్తున్నాము
+        setActivityData(data || []);
+      }
+      setLoading(false);
     }
-    
-    // డేటా టైప్‌ను సేఫ్‌గా కాస్ట్ చేయడం
-    return (courses as Course[]) || [];
-  } catch (err) {
-    console.error("Database connection failed:", err);
-    return [];
-  }
-}
 
-export default async function Home() {
-  const courses = await getCourses();
+    fetchData();
+  }, []);
+
+  if (loading) return <div className="p-10 text-white">Loading scores...</div>;
 
   return (
-    <main className="min-h-screen bg-black text-white flex">
-      {/* Sidebar Navigation */}
-      <Sidebar />
-
-      {/* Main Content Area */}
-      <section className="flex-1 p-8 overflow-y-auto h-screen">
+    <main className="min-h-screen bg-[#0a0a0a] p-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold text-white mb-8">Student Dashboard</h1>
         
-        {/* Hero Welcome Banner */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 mb-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-6 opacity-10 text-8xl select-none">🎓</div>
-          <h1 className="text-4xl font-extrabold text-white tracking-tight">
-            Welcome Back, Student 👋
-          </h1>
-          <p className="text-lg mt-2 text-zinc-400">
-            Learning Streak: <span className="text-orange-500 font-bold animate-pulse">12 Days 🔥</span>
-          </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* 3. మనం తెచ్చిన డేటాను గ్రాఫ్ కి పంపిస్తున్నాము */}
+          <ActivityTile data={activityData} />
+          
+          {/* ఇతర కార్డ్స్ ఇక్కడ యాడ్ చేసుకోవచ్చు */}
         </div>
-
-        {/* Bento Layout Wrapper */}
-        <div className="space-y-6">
-          {/* Active Courses Grid */}
-          <div>
-            <h2 className="text-2xl font-bold text-zinc-300 mb-4">Your Active Courses</h2>
-            <Suspense fallback={<SkeletonLoader />}>
-              <CourseGridClient courses={courses} />
-            </Suspense>
-          </div>
-
-          {/* 📊 Weekly Activity Chart section */}
-          <div className="w-full pt-2">
-            <ActivityTile />
-          </div>
-        </div>
-        
-      </section>
+      </div>
     </main>
   );
 }
