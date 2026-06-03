@@ -7,14 +7,18 @@ import SkeletonLoader from "@/components/SkeletonLoader";
 
 export default async function DashboardPage() {
   // 1. 'courses' టేబుల్ నుండి డేటా ఫెచ్ చేయడం
-  const { data: courseData } = await supabase
+  const { data: courseData, error: courseError } = await supabase
     .from("courses")
     .select("id, title, progress, icon_name");
 
   // 2. 'student_activity' టేబుల్ నుండి గ్రాఫ్ డేటా ఫెచ్ చేయడం
-  const { data: activityDataRaw } = await supabase
+  const { data: activityDataRaw, error: activityError } = await supabase
     .from("student_activity")
     .select("day, hours");
+
+  // కన్సోల్ లాగ్ ద్వారా ఎర్రర్స్ చెక్ చేయడం (ఒకవేళ డేటా రాకపోతే ఇది హెల్ప్ అవుతుంది)
+  if (courseError) console.error("Course Error:", courseError);
+  if (activityError) console.error("Activity Error:", activityError);
 
   // డేటా క్లీనింగ్
   const courses = (courseData || []).map((item) => ({
@@ -35,7 +39,6 @@ export default async function DashboardPage() {
         <div className="max-w-[1400px] mx-auto space-y-10">
           
           <div className="bg-[#111] border border-[#222] p-8 rounded-[2rem] flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-             {/* హెడర్ కంటెంట్ అలాగే ఉంచండి */}
              <h1 className="text-3xl font-black">Welcome Back, Student 👋</h1>
           </div>
 
