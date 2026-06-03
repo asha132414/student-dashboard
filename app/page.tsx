@@ -1,24 +1,16 @@
 import { Suspense } from "react";
 import { supabase } from "@/lib/supabase";
 import Sidebar from "@/components/Sidebar";
-import ActivityTile from "@/components/ActivityTile";
 import CourseGridClient from "@/components/CourseGridClient";
 import SkeletonLoader from "@/components/SkeletonLoader";
 
 export default async function DashboardPage() {
-  // 1. 'courses' టేబుల్ నుండి డేటా ఫెచ్ చేయడం
+  // 1. కేవలం 'courses' టేబుల్ నుండి మాత్రమే డేటా ఫెచ్ చేయడం
   const { data: courseData, error: courseError } = await supabase
     .from("courses")
     .select("id, title, progress, icon_name");
 
-  // 2. 'student_activity' టేబుల్ నుండి గ్రాఫ్ డేటా ఫెచ్ చేయడం
-  const { data: activityDataRaw, error: activityError } = await supabase
-    .from("student_activity")
-    .select("day, hours");
-
-  // కన్సోల్ లాగ్ ద్వారా ఎర్రర్స్ చెక్ చేయడం (ఒకవేళ డేటా రాకపోతే ఇది హెల్ప్ అవుతుంది)
   if (courseError) console.error("Course Error:", courseError);
-  if (activityError) console.error("Activity Error:", activityError);
 
   // డేటా క్లీనింగ్
   const courses = (courseData || []).map((item) => ({
@@ -28,10 +20,6 @@ export default async function DashboardPage() {
     icon_name: item.icon_name ?? "BookOpen",
   }));
 
-  const activityData = (activityDataRaw || []).filter(
-    (row) => row.day && row.hours !== null
-  );
-
   return (
     <div className="flex bg-[#050505] min-h-screen text-white font-sans antialiased">
       <Sidebar />
@@ -39,18 +27,14 @@ export default async function DashboardPage() {
         <div className="max-w-[1400px] mx-auto space-y-10">
           
           <div className="bg-[#111] border border-[#222] p-8 rounded-[2rem] flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-             <h1 className="text-3xl font-black">Welcome Back, Student 👋</h1>
+              <h1 className="text-3xl font-black">Welcome Back, Student 👋</h1>
           </div>
 
           <Suspense fallback={<SkeletonLoader />}>
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
-              <div className="xl:col-span-1">
-                <ActivityTile data={activityData} />
-              </div>
-              <div className="xl:col-span-2 space-y-6">
-                <h2 className="text-xl font-bold text-white px-1">My Courses</h2>
-                <CourseGridClient courses={courses} />
-              </div>
+            {/* ActivityTile ని పూర్తిగా తొలగించాను */}
+            <div className="space-y-6">
+              <h2 className="text-xl font-bold text-white px-1">My Courses</h2>
+              <CourseGridClient courses={courses} />
             </div>
           </Suspense>
 
