@@ -2,18 +2,17 @@
 
 ## Overview
 
-A modern student learning dashboard built with Next.js, Supabase, Tailwind CSS, and Framer Motion.
+A modern Student Learning Dashboard built with Next.js, Supabase, Tailwind CSS, and Framer Motion. The dashboard helps students track course progress and learning activity through an interactive and responsive interface.
 
 ## Features
 
+* Dark Mode UI
 * Responsive Bento Grid Layout
-* Dark Mode Interface
-* Dynamic Course Cards
-* Supabase Data Fetching
+* Dynamic Course Cards from Supabase
 * Animated Progress Bars
 * Framer Motion Animations
-* Loading Skeletons
-* Mobile, Tablet, and Desktop Support
+* Loading Skeleton States
+* Mobile, Tablet, and Desktop Responsive Design
 
 ## Tech Stack
 
@@ -22,13 +21,13 @@ A modern student learning dashboard built with Next.js, Supabase, Tailwind CSS, 
 * Tailwind CSS
 * Supabase
 * Framer Motion
-* Lucide React
+* Lucide React Icons
 
 ## Architecture
 
-* Server Components are used to fetch course data from Supabase.
-* Client Components handle animations and interactions.
-* Components are organized for reusability and maintainability.
+* Server Components fetch course data from Supabase.
+* Client Components handle animations and interactive UI elements.
+* Components are organized into reusable modules for maintainability.
 
 ## Environment Variables
 
@@ -42,8 +41,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 
 * Building a responsive Bento Grid layout.
 * Creating smooth animations without layout shifts.
-* Integrating Supabase securely.
-* Managing Server and Client Component separation.
+* Securely integrating Supabase.
+* Managing the Server Component and Client Component split.
 
 ## Deployment
 
