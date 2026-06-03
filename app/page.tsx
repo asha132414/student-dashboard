@@ -16,16 +16,15 @@ export default function Dashboard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        // ఇక్కడ టేబుల్ పేరు 'weekly_activity' నుండి 'courses' గా మార్చాము
+        // మీ సుపాబేస్ లో ఉన్న 'courses' టేబుల్ నుండి డేటా తెచ్చుకుంటున్నాము
         const { data, error } = await supabase
-          .from('courses') 
+          .from('courses')
           .select('day, hours')
           .order('id', { ascending: true });
 
         if (error) {
           console.error('Supabase error:', error.message);
         } else if (data) {
-          // డేటాను స్టేట్ లో పెడుతున్నాము
           setActivityData(data as ActivityItem[]);
         }
       } catch (err) {
@@ -51,7 +50,6 @@ export default function Dashboard() {
               <span className="text-gray-400 animate-pulse text-sm">Loading activity data...</span>
             </div>
           ) : (
-            // లోడింగ్ అయిపోయాక గ్రాఫ్ ఇక్కడ డిస్‌ప్లే అవుతుంది
             <ActivityTile data={activityData} />
           )}
         </div>
