@@ -1,67 +1,57 @@
 "use client";
 
+import React from "react";
 import { motion } from "framer-motion";
-import * as Icons from "lucide-react";
+import { BookOpen, Code, Terminal, Layers, Cpu, Shield } from "lucide-react";
 
-// సుపాబేస్ నుండి వచ్చే డేటా స్ట్రక్చర్ ఇంటర్‌ఫేస్
-interface Course {
-  id: string;
+export interface CourseProps {
   title: string;
   progress: number;
   icon_name: string;
 }
 
-interface CourseCardProps {
-  course: Course;
-}
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  BookOpen: BookOpen,
+  Code: Code,
+  Terminal: Terminal,
+  Layers: Layers,
+  Cpu: Cpu,
+  Shield: Shield,
+};
 
-export default function CourseCard({ course }: CourseCardProps) {
-  // లూసిడ్ ఐకాన్స్ లోని కీస్ మాత్రమే ఉండేలా టైప్ సేఫ్ లాజిక్
-  const iconKey = Object.keys(Icons).find(
-    (key) => key.toLowerCase() === course.icon_name.toLowerCase()
-  ) as keyof typeof Icons | undefined;
-  
-  // ఒకవేళ ఐకాన్ దొరికితే దాన్ని వాడుతుంది, లేదంటే డిఫాల్ట్‌గా BookOpen ఐకాన్ వస్తుంది
-  const LucideIcon = iconKey ? (Icons[iconKey] as React.ComponentType<{ className?: string }>) : Icons.BookOpen;
+export default function CourseCard({ title, progress, icon_name }: CourseProps) {
+  const DisplayIcon = iconMap[icon_name] || BookOpen;
 
   return (
-    <motion.article 
-      // Requirement 4: మౌస్ పెట్టినప్పుడు 1-2% స్కేల్ అవ్వాలి మరియు వై-యాక్సిస్ పై పైకి జరగాలి
-      whileHover={{ scale: 1.02, y: -5 }} 
-      // Requirement: స్ప్రింగ్ ఫిజిక్స్ వాడాలి
-      transition={{ type: "spring", stiffness: 300, damping: 20 }} 
-      className="bg-zinc-900 border border-zinc-800 hover:border-cyan-500/50 p-6 rounded-2xl relative overflow-hidden group transition-colors duration-300"
-    >
-      {/* Background: హోవర్ చేసినప్పుడు గ్రేడియంట్ మెష్ రివీల్ అవుతుంది */}
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+    <div className="bg-[#121212] p-5 rounded-2xl border border-[#222] shadow-xl relative overflow-hidden flex flex-col justify-between h-44 group transition-colors duration-300 hover:border-[#38bdf8]/30">
+      <div className="absolute -inset-px bg-gradient-to-tr from-[#0284c7]/0 to-[#38bdf8]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none" />
 
-      <div className="relative z-10">
-        {/* Glowing Icon Container */}
-        <div className="p-3 bg-zinc-800 text-cyan-400 w-fit rounded-xl mb-4 group-hover:shadow-[0_0_15px_rgba(34,211,238,0.3)] transition-shadow">
-          <LucideIcon className="w-6 h-6" />
+      <div className="flex items-start justify-between relative z-10">
+        <div className="p-3 bg-[#1a1a1a] rounded-xl border border-[#262626] text-[#38bdf8]">
+          <DisplayIcon className="h-5 w-5" />
+        </div>
+        <span className="text-xs font-semibold bg-[#1a2d3d] text-[#38bdf8] px-2.5 py-1 rounded-full border border-[#1e3a52]">
+          Active
+        </span>
+      </div>
+
+      <div className="relative z-10 w-full">
+        <h3 className="text-sm font-bold text-white mb-2 line-clamp-1">{title}</h3>
+        
+        <div className="w-full bg-[#1c1c1c] h-1.5 rounded-full overflow-hidden border border-[#252525]">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="h-full bg-gradient-to-r from-[#0284c7] to-[#38bdf8] rounded-full"
+          />
         </div>
         
-        {/* Course Title */}
-        <h3 className="text-lg font-bold text-white mb-2">{course.title}</h3>
-        
-        <div className="mt-6">
-          <div className="flex justify-between text-sm text-zinc-400 mb-2">
-            <span>Progress</span>
-            <span className="font-medium text-cyan-400">{course.progress}%</span>
-          </div>
-          
-          {/* Progress Bar Container */}
-          <div className="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
-            {/* Requirement: 0% నుండి ఆటోమేటిక్‌గా డేటాబేస్ వాల్యూ వరకు యానిమేట్ అవ్వాలి */}
-            <motion.div 
-              initial={{ width: "0%" }} 
-              animate={{ width: `${course.progress}%` }} 
-              transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.3 }}
-              className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-full"
-            />
-          </div>
+        <div className="flex justify-between items-center mt-2 text-[10px] text-gray-500 font-bold uppercase tracking-wider">
+          <span>Progress</span>
+          <span className="text-white font-semibold">{progress}%</span>
         </div>
       </div>
-    </motion.article>
+    </div>
   );
 }
