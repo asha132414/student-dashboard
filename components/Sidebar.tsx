@@ -2,6 +2,7 @@
 
 import React from "react";
 import { LayoutDashboard, BookOpen, BarChart3, User, Settings, LogOut } from "lucide-react";
+import { motion } from "framer-motion"; // యానిమేషన్ కోసం
 
 export default function Sidebar() {
   const menuItems = [
@@ -15,36 +16,41 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-[#0a0a0a] min-h-screen border-r border-[#1a1a1a] p-6 flex flex-col justify-between shrink-0 hidden md:flex">
       <div className="flex flex-col gap-10">
-        {/* 🎯 బ్రాండ్ లోగో: Lumina Path */}
+        {/* బ్రాండ్ లోగో */}
         <div className="flex items-center gap-2 px-2">
-          <span className="text-2xl font-black tracking-tight text-[#00e5ff] drop-shadow-[0_0_10px_rgba(0,229,255,0.2)]">
+          <span className="text-2xl font-black tracking-tight text-[#00e5ff]">
             Lumina Path
           </span>
         </div>
 
         {/* నావిగేషన్ లింకులు */}
         <nav className="flex flex-col gap-2">
-          {menuItems.map((item, index) => {
+          {menuItems.map((item) => {
             const Icon = item.icon;
             return (
               <button
-                key={index}
-                className={`flex items-center gap-4 px-4 py-3.5 rounded-xl text-sm font-bold tracking-wide transition-all duration-300 w-full text-left ${
-                  item.active
-                    ? "bg-[#1c1c1c] text-white border border-[#2d2d2d] shadow-lg"
-                    : "text-gray-500 hover:text-gray-300 hover:bg-[#121212]/50"
-                }`}
+                key={item.name}
+                className="relative flex items-center gap-4 px-4 py-3.5 rounded-xl text-sm font-bold w-full transition-all"
               >
-                <Icon className={`h-5 w-5 ${item.active ? "text-[#00e5ff]" : "text-gray-500"}`} />
-                {item.name}
+                {/* యాక్టివ్ ఐటమ్ హైలైట్ యానిమేషన్ */}
+                {item.active && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute inset-0 bg-[#1c1c1c] border border-[#2d2d2d] rounded-xl shadow-lg"
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }} // స్ప్రింగ్ ఫిజిక్స్
+                  />
+                )}
+                <Icon className={`relative z-10 h-5 w-5 ${item.active ? "text-[#00e5ff]" : "text-gray-500"}`} />
+                <span className={`relative z-10 ${item.active ? "text-white" : "text-gray-500"}`}>
+                  {item.name}
+                </span>
               </button>
             );
           })}
         </nav>
       </div>
 
-      {/* లాగ్ అవుట్ బటన్ */}
-      <button className="flex items-center gap-4 px-4 py-3.5 rounded-xl text-sm font-bold text-gray-500 hover:text-red-400 hover:bg-red-500/5 transition-all duration-300 w-full text-left mt-auto">
+      <button className="flex items-center gap-4 px-4 py-3.5 rounded-xl text-sm font-bold text-gray-500 hover:text-red-400 hover:bg-red-500/5 transition-all w-full">
         <LogOut className="h-5 w-5" />
         Logout
       </button>

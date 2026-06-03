@@ -1,41 +1,28 @@
-import { Suspense } from "react";
 import { supabase } from "@/lib/supabase";
-import Sidebar from "@/components/Sidebar";
-import CourseGridClient from "@/components/CourseGridClient";
-import SkeletonLoader from "@/components/SkeletonLoader";
+import CourseGridClient from "@/components/CourseGridClient"; // Bento grid కోసం
+import { Suspense } from "react";
+import SkeletonLoader from "@/components/SkeletonLoader"; // Loading state కోసం 
 
 export default async function DashboardPage() {
-  // కేవలం 'courses' టేబుల్ నుండి మాత్రమే డేటా ఫెచ్ చేయడం
-  const { data: courseData, error: courseError } = await supabase
+  // Supabase నుండి courses డేటాను ఫెచ్ చేయడం [cite: 27]
+  const { data: courses, error } = await supabase
     .from("courses")
     .select("id, title, progress, icon_name");
 
-  if (courseError) console.error("Course Error:", courseError);
-
-  const courses = (courseData || []).map((item) => ({
-    id: item.id,
-    title: item.title,
-    progress: item.progress ?? 0,
-    icon_name: item.icon_name ?? "BookOpen",
-  }));
+  if (error) {
+    return <div>Error loading dashboard: {error.message}</div>; // Error Handling [cite: 43]
+  }
 
   return (
-    <div className="flex bg-[#050505] min-h-screen text-white font-sans antialiased">
-      <Sidebar />
-      <main className="flex-1 min-w-0 overflow-y-auto px-4 sm:px-8 py-8 lg:px-12">
-        <div className="max-w-[1400px] mx-auto space-y-10">
-          <div className="bg-[#111] border border-[#222] p-8 rounded-[2rem]">
-             <h1 className="text-3xl font-black">Welcome Back, Student 👋</h1>
-          </div>
-
-          <Suspense fallback={<SkeletonLoader />}>
-            <div className="space-y-6">
-              <h2 className="text-xl font-bold text-white px-1">My Courses</h2>
-              <CourseGridClient courses={courses} />
-            </div>
-          </Suspense>
-        </div>
-      </main>
-    </div>
+    <main className="min-h-screen bg-[#050505] text-white p-8">
+      <h1 className="text-3xl font-black mb-10">Welcome Back, Student 👋</h1>
+      
+      {/* Suspense తో loading skeleton  */}
+      <Suspense fallback={<SkeletonLoader />}>
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <CourseGridClient courses={courses || []} />
+        </section>
+      </Suspense>
+    </main>
   );
 }
