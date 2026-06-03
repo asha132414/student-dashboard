@@ -16,9 +16,9 @@ export default function Dashboard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        // సుపాబేస్ లోని 'weekly_activity' టేబుల్ నుండి డేటా తెచ్చుకుంటున్నాము
+        // ఇక్కడ టేబుల్ పేరు 'weekly_activity' నుండి 'courses' గా మార్చాము
         const { data, error } = await supabase
-          .from('weekly_activity')
+          .from('courses') 
           .select('day, hours')
           .order('id', { ascending: true });
 
