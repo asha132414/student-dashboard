@@ -1,61 +1,53 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { LayoutDashboard, BookOpen, BarChart3, Settings, LogOut } from "lucide-react";
-
-const menuItems = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "courses", label: "My Courses", icon: BookOpen },
-  { id: "analytics", label: "Analytics", icon: BarChart3 },
-  { id: "settings", label: "Settings", icon: Settings },
-];
+import React from "react";
+import { LayoutDashboard, BookOpen, BarChart3, User, Settings, LogOut } from "lucide-react";
 
 export default function Sidebar() {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const menuItems = [
+    { name: "Dashboard", icon: LayoutDashboard, active: true },
+    { name: "Courses", icon: BookOpen, active: false },
+    { name: "Analytics", icon: BarChart3, active: false },
+    { name: "Profile", icon: User, active: false },
+    { name: "Settings", icon: Settings, active: false },
+  ];
 
   return (
-    <nav className="h-screen w-20 lg:w-64 bg-[#0d0d0d] border-r border-[#1a1a1a] flex flex-col justify-between p-4 sticky top-0">
-      <div className="flex flex-col gap-8">
-        {/* Logo */}
-        <div className="flex items-center gap-3 px-2 py-4">
-          <div className="h-8 w-8 bg-gradient-to-tr from-[#0284c7] to-[#38bdf8] rounded-lg" />
-          <span className="hidden lg:block text-xl font-black text-white tracking-wider">NEXT-GEN</span>
+    <aside className="w-64 bg-[#0a0a0a] min-h-screen border-r border-[#1a1a1a] p-6 flex flex-col justify-between shrink-0 hidden md:flex">
+      <div className="flex flex-col gap-10">
+        {/* 🎯 బ్రాండ్ లోగో: Lumina Path */}
+        <div className="flex items-center gap-2 px-2">
+          <span className="text-2xl font-black tracking-tight text-[#00e5ff] drop-shadow-[0_0_10px_rgba(0,229,255,0.2)]">
+            Lumina Path
+          </span>
         </div>
 
-        {/* Menu Items */}
-        <div className="flex flex-col gap-2">
-          {menuItems.map((item) => {
+        {/* నావిగేషన్ లింకులు */}
+        <nav className="flex flex-col gap-2">
+          {menuItems.map((item, index) => {
             const Icon = item.icon;
-            const isActive = activeTab === item.id;
             return (
               <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`relative flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium transition-colors w-full ${
-                  isActive ? "text-[#38bdf8]" : "text-gray-400 hover:text-white"
+                key={index}
+                className={`flex items-center gap-4 px-4 py-3.5 rounded-xl text-sm font-bold tracking-wide transition-all duration-300 w-full text-left ${
+                  item.active
+                    ? "bg-[#1c1c1c] text-white border border-[#2d2d2d] shadow-lg"
+                    : "text-gray-500 hover:text-gray-300 hover:bg-[#121212]/50"
                 }`}
               >
-                {isActive && (
-                  <motion.div
-                    layoutId="activeIndicator"
-                    className="absolute inset-0 bg-[#142433] rounded-xl border-l-2 border-[#38bdf8] -z-10"
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  />
-                )}
-                <Icon className="h-5 w-5 min-w-[20px]" />
-                <span className="hidden lg:block">{item.label}</span>
+                <Icon className={`h-5 w-5 ${item.active ? "text-[#00e5ff]" : "text-gray-500"}`} />
+                {item.name}
               </button>
             );
           })}
-        </div>
+        </nav>
       </div>
 
-      {/* Logout */}
-      <button className="flex items-center gap-4 px-4 py-3 text-sm font-medium text-gray-500 hover:text-red-400 transition-colors w-full rounded-xl">
-        <LogOut className="h-5 w-5 min-w-[20px]" />
-        <span className="hidden lg:block">Logout</span>
+      {/* లాగ్ అవుట్ బటన్ */}
+      <button className="flex items-center gap-4 px-4 py-3.5 rounded-xl text-sm font-bold text-gray-500 hover:text-red-400 hover:bg-red-500/5 transition-all duration-300 w-full text-left mt-auto">
+        <LogOut className="h-5 w-5" />
+        Logout
       </button>
-    </nav>
+    </aside>
   );
 }
